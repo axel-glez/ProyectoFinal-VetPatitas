@@ -1,0 +1,167 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Iniciar sesión | Patitas</title>
+  <link rel="stylesheet" href="styles.css" />
+  <link rel="stylesheet" href="auth.css" />
+</head>
+<body class="patitas-auth-page">
+
+  
+<header class="patitas-topbar">
+    <div class="patitas-container">
+      <div class="patitas-logo">
+        <img src="assets/logo.png" class="patitas-logo-img" alt="Logo Patitas">
+        <span class="patitas-logo-word">PATITAS</span>
+      </div>
+      <nav class="patitas-nav">
+        <a href="index.html" class="patitas-nav-link">Inicio</a>
+        <a href="registro.html" class="patitas-nav-link">Registro</a>
+        <a href="Historial.html" class="patitas-nav-link">Historial</a>
+        <a href="estado.html" class="patitas-nav-link">Estado</a>
+      </nav>
+      <div class="patitas-auth">
+        <a class="patitas-auth-link" href="registrousuario.html">Crear cuenta</a>
+      </div>
+    </div>
+  </header>
+
+
+  <div class="patitas-auth-wrap">
+    <section class="patitas-auth-card" aria-label="Iniciar sesión">
+      <aside class="patitas-auth-side" aria-hidden="true">
+        <div class="patitas-auth-side-badge">Cuidamos como en casa</div>
+        <h2 class="patitas-auth-side-title">Tu mascota, en buenas manos.</h2>
+        <p class="patitas-auth-side-text">
+          Accede a tu cuenta para registrar servicios, consultar expedientes y llevar el control de vacunas.
+        </p>
+        <ul class="patitas-auth-side-list">
+          <li>🐾 Atención con cariño</li>
+          <li>🩺 Veterinarios capacitados</li>
+        </ul>
+      </aside>
+
+      <div class="patitas-auth-form">
+        <div class="patitas-auth-form-inner">
+          <div class="patitas-auth-head">
+            <h2 class="patitas-auth-title">Iniciar sesión</h2>
+            <p class="patitas-muted">Bienvenido(a) a <b>Patitas</b>. Ingresa tus datos.</p>
+          </div>
+
+          <form id="form" novalidate>
+            <div class="patitas-field">
+              <label class="patitas-label" for="email">Correo electrónico</label>
+              <input id="email" type="email" required class="patitas-input" placeholder="correo@ejemplo.com" autocomplete="email" />
+            </div>
+
+            <div class="patitas-field">
+              <label class="patitas-label" for="password">Contraseña</label>
+              <input id="password" type="password" required class="patitas-input" placeholder="Tu contraseña" autocomplete="current-password" />
+            </div>
+
+            <button class="patitas-submit" type="submit">Entrar a mi cuenta</button>
+
+            <p id="msg" class="patitas-alert patitas-alert--error" style="display:none;"></p>
+          </form>
+
+          <div class="patitas-links">
+            <a href="registrousuario.html">Crear cuenta</a>
+            <a href="index.html">Volver al inicio</a>
+          </div>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <footer class="patitas-footer">
+    <div class="patitas-container patitas-footer-grid">
+      <div>
+        <div class="patitas-footer-logo">PATITAS</div>
+        <p class="patitas-footer-text">
+          Fundada en <b>2026</b>, cuidamos a tu mascota con medicina, cariño y atención moderna
+          para que siempre esté en las mejores manos.
+        </p>
+      </div>
+      <div>
+        <h4>Menú</h4>
+        <a href="index.html">Inicio</a>
+        <a href="registro.html">Registro</a>
+        <a href="Historial.html">Historial</a>
+        <a href="estado.html">Estado</a>
+        <a href="#" aria-disabled="true">Aviso de privacidad</a>
+      </div>
+      <div class="patitas-footer-card">
+        <h4>Recibe novedades</h4>
+        <p class="patitas-footer-text" style="margin-top:0;max-width:none;">Suscríbete al boletín de <b>Patitas</b>.</p>
+        <form class="patitas-footer-form" onsubmit="return false;">
+          <input type="email" placeholder="Correo electrónico" aria-label="Correo electrónico" />
+          <button type="submit" aria-label="Enviar">→</button>
+        </form>
+      </div>
+    </div>
+    <div class="patitas-footer-bottom">
+      <div class="patitas-container">
+        <span>© 2026 Patitas. Todos los derechos reservados.</span>
+        <span>Hecho con 🐾</span>
+      </div>
+    </div>
+  </footer>
+
+  <script type="module">
+    import { setSession, me } from "./assets/auth.js";
+
+    const u = await me();
+    if (u) window.location.href = "index.html";
+
+    const form = document.getElementById("form");
+    const msg = document.getElementById("msg");
+
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      msg.style.display = "none";
+
+      const email = document.getElementById("email").value.trim();
+      const password = document.getElementById("password").value;
+
+      if (!email.includes("@")) {
+        msg.textContent = "El correo electrónico debe contener un @.";
+        msg.style.display = "block";
+        return;
+      }
+
+      if (!password || password.length < 6) {
+        msg.textContent = "La contraseña debe tener al menos 6 caracteres.";
+        msg.style.display = "block";
+        return;
+      }
+
+      const res = await fetch("/api/auth/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, password })
+      });
+
+      const data = await res.json().catch(() => ({}));
+
+      if (!res.ok) {
+        msg.textContent = data.message || "Error al iniciar sesión";
+        msg.style.display = "block";
+        return;
+      }
+
+      setSession({ token: data.token, user: data.user });
+
+      // ✅ Diferenciar admin vs user
+      if (data.user && data.user.role === 'admin') {
+        window.location.href = 'admin.html';
+      } else {
+        window.location.href = 'index.html';
+      }
+    });
+  </script>
+
+  <script type="module" src="assets/nav-init.js"></script>
+</body>
+</html>

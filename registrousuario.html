@@ -1,0 +1,195 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Registro | Patitas</title>
+  <link rel="stylesheet" href="styles.css" />
+  <link rel="stylesheet" href="auth.css" />
+</head>
+<body class="patitas-auth-page">
+
+  
+<header class="patitas-topbar">
+    <div class="patitas-container">
+      <div class="patitas-logo">
+        <img src="assets/logo.png" class="patitas-logo-img" alt="Logo Patitas">
+        <span class="patitas-logo-word">PATITAS</span>
+      </div>
+      <nav class="patitas-nav">
+        <a href="index.html" class="patitas-nav-link">Inicio</a>
+      </nav>
+      <div class="patitas-auth">
+        <a class="patitas-auth-link" href="login.html">Ya tengo cuenta</a>
+      </div>
+    </div>
+  </header>
+
+
+  <div class="patitas-auth-wrap">
+    <section class="patitas-auth-card" aria-label="Crear cuenta">
+      <aside class="patitas-auth-side" aria-hidden="true">
+        <div class="patitas-auth-side-badge">Bienvenido(a) a Patitas</div>
+        <h2 class="patitas-auth-side-title">Crea tu cuenta en 1 minuto.</h2>
+        <p class="patitas-auth-side-text">
+          Tendrás acceso al expediente de tu mascota, recordatorios de vacunas y registro de servicios.
+        </p>
+        <ul class="patitas-auth-side-list">
+          <li>📌 Datos siempre a la mano</li>
+          <li>💚 Atención confiable</li>
+          <li>🔒 Tu información segura</li>
+        </ul>
+      </aside>
+
+      <div class="patitas-auth-form">
+        <div class="patitas-auth-form-inner">
+          <div class="patitas-auth-head">
+            <h1 class="patitas-auth-title">Crear cuenta</h1>
+            <p class="patitas-muted">Regístrate para comenzar a usar <b>Patitas</b>.</p>
+          </div>
+
+          <form id="form" novalidate>
+            <div class="patitas-field">
+              <label class="patitas-label" for="name">Nombre completo</label>
+              <input id="name" required class="patitas-input" placeholder="Tu nombre" autocomplete="name" />
+            </div>
+
+            <div class="patitas-field">
+              <label class="patitas-label" for="email">Correo electrónico</label>
+              <input id="email" type="email" required class="patitas-input" placeholder="correo@ejemplo.com" autocomplete="email" />
+            </div>
+
+            <div class="patitas-field">
+              <label class="patitas-label" for="phone">Teléfono</label>
+              <input id="phone" type="tel" required class="patitas-input" placeholder="10 dígitos (ej. 5512345678)" inputmode="numeric" autocomplete="tel" />
+              <div class="patitas-hint">Debe tener exactamente 10 dígitos.</div>
+            </div>
+
+            <div class="patitas-field">
+              <label class="patitas-label" for="password">Contraseña</label>
+              <input id="password" type="password" required class="patitas-input" placeholder="Mínimo 6 caracteres" autocomplete="new-password" />
+              <div class="patitas-hint">Tip: usa letras + números para mayor seguridad.</div>
+            </div>
+
+            <div class="patitas-admin-box">
+              <label class="patitas-checkbox">
+                <input id="isAdmin" type="checkbox" />
+                Registrarme como administrador (requiere código)
+              </label>
+              <div class="patitas-field patitas-field--compact">
+                <label class="patitas-label" for="adminCode">Código de administrador (si aplica)</label>
+                <input id="adminCode" class="patitas-input" placeholder="Código" />
+              </div>
+              <p class="patitas-muted patitas-muted--small">Si no tienes código, deja esta opción desactivada.</p>
+            </div>
+
+            <button class="patitas-submit" type="submit">Crear mi cuenta</button>
+
+            <p id="msg" class="patitas-alert patitas-alert--error" style="display:none;"></p>
+            <p id="ok" class="patitas-alert patitas-alert--ok" style="display:none;"></p>
+          </form>
+
+          <div class="patitas-links">
+            <a href="login.html">Ya tengo cuenta</a>
+            <a href="index.html">Volver al inicio</a>
+          </div>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <footer class="patitas-footer">
+    <div class="patitas-container patitas-footer-grid">
+      <div>
+        <div class="patitas-footer-logo">PATITAS</div>
+        <p class="patitas-footer-text">
+          Fundada en <b>2026</b>, cuidamos a tu mascota con medicina, cariño y atención moderna
+          para que siempre esté en las mejores manos.
+        </p>
+      </div>
+      <div>
+        <h4>Menú</h4>
+        <a href="index.html">Inicio</a>
+        <a href="login.html">Iniciar sesión</a>
+        <a href="registro.html">Registro</a>
+        <a href="#" aria-disabled="true">Aviso de privacidad</a>
+      </div>
+      <div class="patitas-footer-card">
+        <h4>Recibe novedades</h4>
+        <p class="patitas-footer-text" style="margin-top:0;max-width:none;">Suscríbete al boletín de <b>Patitas</b>.</p>
+        <form class="patitas-footer-form" onsubmit="return false;">
+          <input type="email" placeholder="Correo electrónico" aria-label="Correo electrónico" />
+          <button type="submit" aria-label="Enviar">→</button>
+        </form>
+      </div>
+    </div>
+    <div class="patitas-footer-bottom">
+      <div class="patitas-container">
+        <span>© 2026 Patitas. Todos los derechos reservados.</span>
+        <span>Hecho con 🐾</span>
+      </div>
+    </div>
+  </footer>
+
+  <script type="module">
+    const form = document.getElementById("form");
+    const msg = document.getElementById("msg");
+    const ok = document.getElementById("ok");
+
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      msg.style.display = "none";
+      ok.style.display = "none";
+
+      const isAdmin = document.getElementById("isAdmin").checked;
+      const adminCode = document.getElementById("adminCode").value.trim();
+
+      const name = document.getElementById("name").value.trim();
+      const email = document.getElementById("email").value.trim();
+      const phone = document.getElementById("phone").value.trim();
+      const password = document.getElementById("password").value;
+
+      // Validación simple (obligatorio usar "@")
+      if (!email.includes("@")) {
+        msg.textContent = "El correo electrónico debe contener un @.";
+        msg.style.display = "block";
+        return;
+      }
+
+      const phoneDigits = phone.replace(/\D/g, "");
+      if (phoneDigits.length !== 10) {
+        msg.textContent = "El teléfono debe tener 10 dígitos.";
+        msg.style.display = "block";
+        return;
+      }
+
+      const payload = { name, email, phone: phoneDigits, password };
+
+      if (isAdmin) {
+        payload.role = "admin";
+        payload.adminCode = adminCode;
+      }
+
+      const res = await fetch("/api/auth/register", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload)
+      });
+
+      const data = await res.json().catch(() => ({}));
+
+      if (!res.ok) {
+        msg.textContent = data.message || "No se pudo registrar";
+        msg.style.display = "block";
+        return;
+      }
+
+      ok.textContent = "Cuenta creada. Ahora inicia sesión.";
+      ok.style.display = "block";
+      setTimeout(() => (window.location.href = "login.html"), 900);
+    });
+  </script>
+
+  <script type="module" src="assets/nav-init.js"></script>
+</body>
+</html>

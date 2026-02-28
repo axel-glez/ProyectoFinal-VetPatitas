@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Patitas | Veterinaria</title>
+
+  <!-- Tailwind -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+
+  <link rel="stylesheet" href="styles.css" />
+</head>
+
+<body class="min-h-screen bg-patitas-page">
+
+  <!-- Top Bar (estilo de la imagen, pero en verde opaco) -->
+  
+<header class="patitas-topbar">
+    <div class="patitas-container">
+      <div class="patitas-logo">
+        <img src="assets/logo.png" class="patitas-logo-img" alt="Logo Patitas">
+        <span class="patitas-logo-word">PATITAS</span>
+      </div>
+
+      <nav class="patitas-nav">
+        <a href="index.html" class="patitas-nav-link">Inicio</a>
+        <a href="registro.html" class="patitas-nav-link">Registro</a>
+        <a href="Historial.html" class="patitas-nav-link">Historial</a>
+        <!-- El enlace de Administración se inyecta SOLO si el usuario es admin (assets/nav-init.js) -->
+      </nav>
+
+      <div class="patitas-auth">
+        <a class="patitas-auth-link" href="registrousuario.html">Crear cuenta</a>
+        <span class="patitas-auth-sep">|</span>
+        <a class="patitas-auth-link" href="login.html">Iniciar sesión</a>
+      </div>
+    </div>
+  </header>
+
+
+  <main class="patitas-container patitas-main">
+
+    <!-- HERO (similar a slider de la imagen) -->
+    <section class="patitas-hero">
+      <div class="patitas-hero-media" aria-hidden="true"></div>
+
+      <div class="patitas-hero-overlay">
+        <div class="sr-only" id="heroSlideLabel" aria-live="polite"></div>
+        <div class="patitas-hero-badge">Atención con cariño</div>
+        <h1 class="patitas-hero-title">Veterinaria Patitas</h1>
+        <p class="patitas-hero-subtitle">Consulta, vacunas, estética, urgencias y más.</p>
+        <div class="patitas-hero-cta">
+          <a class="patitas-btn" href="registro.html">Registrar mascota</a>
+          <a class="patitas-btn patitas-btn-ghost" href="Historial.html">Ver historial</a>
+        </div>
+      </div>
+
+      <!-- Chip eliminado por petición (sin texto flotante) -->
+
+      <div class="patitas-hero-foot">
+        <div class="patitas-hours">Horario: Lunes a Sábado • 8:00am a 9:00pm</div>
+        <div class="patitas-arrows" aria-hidden="true">
+          <span class="patitas-arrow" data-dir="prev" role="button" tabindex="0" aria-label="Imagen anterior"><i class="fa-solid fa-angle-left"></i></span>
+          <span class="patitas-arrow" data-dir="next" role="button" tabindex="0" aria-label="Imagen siguiente"><i class="fa-solid fa-angle-right"></i></span>
+        </div>
+      </div>
+    </section>
+
+    <!-- 3 Servicios (como en la imagen) -->
+    <section class="patitas-features">
+      <article class="patitas-feature">
+        <div class="patitas-feature-icon"><i class="fa-solid fa-paw"></i></div>
+        <h3 class="patitas-feature-title">Cuidado general</h3>
+        <p class="patitas-feature-text">Chequeos, vacunas, desparasitación y seguimiento.</p>
+      </article>
+
+      <article class="patitas-feature">
+        <div class="patitas-feature-icon"><i class="fa-solid fa-house"></i></div>
+        <h3 class="patitas-feature-title">Hotel para mascotas</h3>
+        <p class="patitas-feature-text">Estancia segura con supervisión y atención constante.</p>
+      </article>
+
+      <article class="patitas-feature">
+        <div class="patitas-feature-icon"><i class="fa-solid fa-truck-medical"></i></div>
+        <h3 class="patitas-feature-title">Urgencias</h3>
+        <p class="patitas-feature-text">Atención prioritaria para urgencias y emergencias.</p>
+      </article>
+    </section>
+
+    <!-- Carrusel de Servicios (estilo tarjetas con flechas y puntos) -->
+    <section class="patitas-services" aria-label="Servicios y precios">
+      <div class="patitas-services-head">
+        <h2 class="patitas-section-title">Nuestros servicios</h2>
+      </div>
+
+      <div class="patitas-services-wrap">
+        <div class="patitas-services-track" id="servicesTrack" aria-label="Lista de servicios">
+          <article class="patitas-service-card">
+            <div class="patitas-service-icon"><i class="fa-solid fa-stethoscope"></i></div>
+            <div class="patitas-service-name">Consulta</div>
+            <div class="patitas-service-price">Desde <b>$350</b> MXN</div>
+          </article>
+
+          
+
+          <article class="patitas-service-card">
+            <div class="patitas-service-icon"><i class="fa-solid fa-tooth"></i></div>
+            <div class="patitas-service-name">Profilaxis</div>
+            <div class="patitas-service-price">Desde <b>$650</b> MXN</div>
+          </article>
+<article class="patitas-service-card">
+            <div class="patitas-service-icon"><i class="fa-solid fa-syringe"></i></div>
+            <div class="patitas-service-name">Vacunas</div>
+            <div class="patitas-service-price">Desde <b>$280</b> MXN</div>
+          </article>
+
+          <article class="patitas-service-card">
+            <div class="patitas-service-icon"><i class="fa-solid fa-bandage"></i></div>
+            <div class="patitas-service-name">Esterilización</div>
+            <div class="patitas-service-price">Desde <b>$1,200</b> MXN</div>
+          </article>
+
+          <article class="patitas-service-card">
+            <div class="patitas-service-icon"><i class="fa-solid fa-user-doctor"></i></div>
+            <div class="patitas-service-name">Cirugía</div>
+            <div class="patitas-service-price">Desde <b>$2,500</b> MXN</div>
+          </article>
+
+          <article class="patitas-service-card">
+            <div class="patitas-service-icon"><i class="fa-solid fa-scissors"></i></div>
+            <div class="patitas-service-name">Estética</div>
+            <div class="patitas-service-price">Desde <b>$320</b> MXN</div>
+          </article>
+
+          <article class="patitas-service-card">
+            <div class="patitas-service-icon"><i class="fa-solid fa-bug-slash"></i></div>
+            <div class="patitas-service-name">Desparasitación</div>
+            <div class="patitas-service-price">Desde <b>$250</b> MXN</div>
+          </article>
+
+          <article class="patitas-service-card">
+            <div class="patitas-service-icon"><i class="fa-solid fa-hospital"></i></div>
+            <div class="patitas-service-name">Hospitalización</div>
+            <div class="patitas-service-price">Desde <b>$900</b> MXN</div>
+          </article>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <footer class="patitas-footer">
+    <div class="patitas-container patitas-footer-grid">
+      <div>
+        <div class="patitas-footer-logo">PATITAS</div>
+        <p class="patitas-footer-text">
+          Fundada en <b>2026</b>, cuidamos a tu mascota con medicina, cariño y atención moderna
+          para que siempre esté en las mejores manos.
+        </p>
+      </div>
+
+      <div>
+        <h4>Menú</h4>
+        <a href="index.html">Inicio</a>
+        <a href="registro.html">Registro</a>
+        <a href="Historial.html">Historial</a>
+        <a href="#" aria-disabled="true">Aviso de privacidad</a>
+      </div>
+
+      <div class="patitas-footer-card">
+        <h4>Recibe novedades</h4>
+        <p class="patitas-footer-text" style="margin-top:0;max-width:none;">
+          Suscríbete al boletín de <b>Patitas</b>.
+        </p>
+        <form class="patitas-footer-form" onsubmit="return false;">
+          <input type="email" placeholder="Correo electrónico" aria-label="Correo electrónico" />
+          <button type="submit" aria-label="Enviar">→</button>
+        </form>
+      </div>
+    </div>
+
+    <div class="patitas-footer-bottom">
+      <div class="patitas-container">
+        <span>© 2026 Patitas. Todos los derechos reservados.</span>
+        <span>Hecho con 🐾</span>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Ajusta el header según sesión + efecto sutil en hero -->
+  <script type="module" src="assets/nav-init.js"></script>
+  <script type="module" src="assets/hero-parallax.js"></script>
+
+
+  <!-- Carrusel del HERO (cambia imagen cada 4s + flechas) -->
+  <script>
+    (function () {
+      const hero = document.querySelector('.patitas-hero');
+      const media = document.querySelector('.patitas-hero-media');
+      const slideLabel = document.getElementById('heroSlideLabel');
+      if (!hero || !media) return;
+
+      const slides = [
+        { label: 'Gatito en consulta', url: 'https://images.unsplash.com/photo-1518791841217-8f162f1e1131?auto=format&fit=crop&w=1600&q=60' },
+        { label: 'Perrito feliz',      url: 'https://images.unsplash.com/photo-1517849845537-4d257902454a?auto=format&fit=crop&w=1600&q=60' },
+        { label: 'Conejito',          url: 'https://images.unsplash.com/photo-1548767797-d8c844163c4c?auto=format&fit=crop&w=1600&q=60' },
+        { label: 'Hámster',           url: 'https://images.unsplash.com/photo-1425082661705-1834bfd09dca?auto=format&fit=crop&w=1600&q=60' },
+        { label: 'Gato y perro',      url: 'https://images.unsplash.com/photo-1530281700549-e82e7bf110d6?auto=format&fit=crop&w=1600&q=60' }
+      ];
+
+      // Precarga para evitar parpadeos
+      slides.forEach(s => { const img = new Image(); img.src = s.url; });
+
+      let idx = 0;
+      let timer = null;
+      let fadeT = null;
+      let inited = false;
+
+      function setSlide(i) {
+        idx = (i + slides.length) % slides.length;
+        const s = slides[idx];
+        // Primera carga (sin animación)
+        if (!inited) {
+          media.style.setProperty('--patitas-hero-image', `url('${s.url}')`);
+          media.style.setProperty('--patitas-hero-image-next', `url('${s.url}')`);
+          media.style.setProperty('--patitas-hero-fade', '0');
+          inited = true;
+        } else {
+          // Transición suave: mostramos la imagen "next" con fade y luego la fijamos como actual
+          if (fadeT) clearTimeout(fadeT);
+          media.style.setProperty('--patitas-hero-image-next', `url('${s.url}')`);
+          // Fuerza reflow para asegurar que el navegador aplique el cambio antes del fade
+          void media.offsetWidth;
+          media.style.setProperty('--patitas-hero-fade', '1');
+          fadeT = setTimeout(() => {
+            media.style.setProperty('--patitas-hero-image', `url('${s.url}')`);
+            media.style.setProperty('--patitas-hero-fade', '0');
+          }, 680);
+        }
+        if (slideLabel) slideLabel.textContent = `Imagen: ${s.label}`;
+      }
+
+      function next() { setSlide(idx + 1); }
+      function prev() { setSlide(idx - 1); }
+
+      function restart() {
+        if (timer) clearInterval(timer);
+        timer = setInterval(next, 4000);
+      }
+
+      // Flechas
+      const arrows = hero.querySelectorAll('.patitas-arrow[data-dir]');
+      arrows.forEach(btn => {
+        const dir = btn.getAttribute('data-dir');
+        const go = () => {
+          dir === 'prev' ? prev() : next();
+          restart();
+        };
+        btn.addEventListener('click', go);
+        btn.addEventListener('keydown', (e) => {
+          if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            go();
+          }
+        });
+      });
+
+      // Inicia
+      setSlide(0);
+      restart();
+    })();
+  </script>
+
+</body>
+</html>

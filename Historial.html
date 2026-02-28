@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Historial - Veterinaria Patitas</title>
+  <!-- Header compartido (mismo en todas las páginas) -->
+  <link rel="stylesheet" href="styles.css" />
+  <link rel="stylesheet" href="stylesHistorial.css" />
+</head>
+<body>
+
+  <!-- Top Bar (misma barra superior para todas las pestañas) -->
+  
+<header class="patitas-topbar">
+    <div class="patitas-container">
+      <div class="patitas-logo">
+        <img src="assets/logo.png" class="patitas-logo-img" alt="Logo Patitas">
+        <span class="patitas-logo-word">PATITAS</span>
+      </div>
+
+      <nav class="patitas-nav">
+        <a href="index.html" class="patitas-nav-link">Inicio</a>
+        <a href="registro.html" class="patitas-nav-link">Registro</a>
+        <a href="Historial.html" class="patitas-nav-link" aria-current="page">Historial</a>
+        <!-- Estado/Admin los inyecta assets/nav-init.js según sesión -->
+      </nav>
+
+      <div class="patitas-auth"></div>
+    </div>
+  </header>
+
+
+  <section class="card hero">
+    <div class="hero__content">
+      <h2>Historial de mascotas</h2>
+      <p class="muted">Aquí puedes ver las mascotas que has registrado y los datos del expediente.</p>
+
+      <div class="hero__cta">
+        <a href="registro.html" class="btn btn-primary">Registrar otra mascota</a>
+      </div>
+
+      <div class="chips" aria-label="Etiquetas">
+        <span class="chip">Mascota</span>
+        <span class="chip">Servicio</span>
+        <span class="chip">Notas</span>
+        <span class="chip">Vacunas</span>
+      </div>
+    </div>
+
+    <aside class="hero__panel" aria-label="Resumen">
+      <div class="mini">
+        <strong>Total registradas</strong>
+        <p class="muted small" id="totalPets">—</p>
+      </div>
+      <div class="mini">
+        <strong>Última actualización</strong>
+        <p class="muted small" id="lastUpdated">—</p>
+      </div>
+      <div class="mini">
+        <strong>Cuenta</strong>
+        <p class="muted small" id="userNameMini">—</p>
+      </div>
+    </aside>
+  </section>
+
+  <section class="card" id="historial" aria-label="Listado de mascotas">
+    <header class="section-header">
+      <div>
+        <h2>Mis mascotas</h2>
+        <p class="muted">Busca por nombre, especie, raza o servicio.</p>
+      </div>
+    </header>
+
+    <div class="history-toolbar">
+      <div class="field">
+        <label for="search">Buscar</label>
+        <input id="search" type="text" placeholder="Buscar mascota..." />
+      </div>
+
+      <div class="field">
+        <label for="filter">Filtro</label>
+        <select id="filter">
+          <option value="all">Todas</option>
+          <option value="Consulta">Consulta</option>
+          <option value="Profilaxis">Profilaxis</option>
+          <option value="Vacunas">Vacunas</option>
+          <option value="Esterilización">Esterilización</option>
+          <option value="Cirugía">Cirugía</option>
+          <option value="Estética">Estética</option>
+          <option value="Desparasitación">Desparasitación</option>
+          <option value="Hospitalización">Hospitalización</option>
+          <option value="Urgencia">Urgencia</option>
+          <option value="Otro">Otro</option>
+        </select>
+      </div>
+    </div>
+
+    <div id="historyList" class="history-list" aria-live="polite"></div>
+    <p id="msg" class="muted" style="margin-top: 14px;"></p>
+
+    <div class="actions end" style="margin-top: 18px;">
+      <a href="index.html" class="btn btn-ghost">Volver al inicio</a>
+      <a href="registro.html" class="btn btn-primary">Registrar otra mascota</a>
+    </div>
+  </section>
+
+  <footer class="patitas-footer">
+    <div class="patitas-container patitas-footer-grid">
+      <div>
+        <div class="patitas-footer-logo">PATITAS</div>
+        <p class="patitas-footer-text">
+          Fundada en <b>2026</b>, cuidamos a tu mascota con medicina, cariño y atención moderna
+          para que siempre esté en las mejores manos.
+        </p>
+      </div>
+      <div>
+        <h4>Menú</h4>
+        <a href="index.html">Inicio</a>
+        <a href="registro.html">Registro</a>
+        <a href="Historial.html">Historial</a>
+        <a href="#" aria-disabled="true">Aviso de privacidad</a>
+      </div>
+      <div class="patitas-footer-card">
+        <h4>Recibe novedades</h4>
+        <p class="patitas-footer-text" style="margin-top: 0; max-width: none;">Suscríbete al boletín de <b>Patitas</b>.</p>
+        <form class="patitas-footer-form" onsubmit="return false;">
+          <input type="email" placeholder="Correo electrónico" aria-label="Correo electrónico" />
+          <button type="submit" aria-label="Enviar">→</button>
+        </form>
+      </div>
+    </div>
+    <div class="patitas-footer-bottom">
+      <div class="patitas-container">
+        <span>© 2026 Patitas. Todos los derechos reservados.</span>
+        <span>Hecho con 🐾</span>
+      </div>
+    </div>
+  </footer>
+
+  <script src="app-auth.js"></script>
+  <script>
+    if (!requireLogin()) {
+      // requireLogin ya redirige si no hay sesión
+    }
+
+    const msg = document.getElementById('msg');
+    const listEl = document.getElementById('historyList');
+    const searchEl = document.getElementById('search');
+    const filterEl = document.getElementById('filter');
+
+    const totalPetsEl = document.getElementById('totalPets');
+    const lastUpdatedEl = document.getElementById('lastUpdated');
+    const userNameMiniEl = document.getElementById('userNameMini');
+
+    let allPets = [];
+
+    function safeText(v) {
+      const s = (v ?? '').toString().trim();
+      return s.length ? s : '—';
+    }
+
+    function formatDate(d) {
+      try {
+        const dt = new Date(d);
+        if (Number.isNaN(dt.getTime())) return '—';
+        return dt.toLocaleDateString('es-MX', { year: 'numeric', month: '2-digit', day: '2-digit' });
+      } catch {
+        return '—';
+      }
+    }
+
+    // ✅ Parsea: "PATITAS|tipoServicio=Vacunas;vacunasEstado=No aplica;notas=..."
+    function parsePatitasNotes(raw) {
+      const out = { tipoServicio: '', vacunasEstado: '', notas: '' };
+      if (!raw) return out;
+
+      const s = String(raw);
+      if (!s.startsWith('PATITAS|')) {
+        out.notas = s; // notas normales
+        return out;
+      }
+
+      const payload = s.split('|')[1] || '';
+      const parts = payload.split(';').map(x => x.trim()).filter(Boolean);
+
+      for (const p of parts) {
+        const idx = p.indexOf('=');
+        if (idx === -1) continue;
+        const key = p.slice(0, idx).trim();
+        const val = p.slice(idx + 1).trim();
+
+        if (key === 'tipoServicio') out.tipoServicio = val;
+        if (key === 'vacunasEstado') out.vacunasEstado = val;
+        if (key === 'notas') out.notas = val;
+      }
+      return out;
+    }
+
+    // ✅ Normaliza datos para render bonito
+    function normalizePet(pet) {
+      const parsed = parsePatitasNotes(pet.notes);
+
+      return {
+        ...pet,
+        service: pet.service || parsed.tipoServicio || '',
+        vaccineStatus: pet.vaccineStatus || parsed.vacunasEstado || '',
+        cleanNotes: parsed.notas || (!String(pet.notes || '').startsWith('PATITAS|') ? (pet.notes || '') : '')
+      };
+    }
+
+    function matches(petRaw) {
+      const pet = normalizePet(petRaw);
+      const q = searchEl.value.trim().toLowerCase();
+      const f = filterEl.value;
+
+      const haystack = [
+        pet.name,
+        pet.species,
+        pet.breed,
+        pet.service,
+        pet.vaccineStatus,
+        pet.cleanNotes
+      ].filter(Boolean).join(' ').toLowerCase();
+
+      const okQuery = !q || haystack.includes(q);
+      const okFilter = (f === 'all') || ((pet.service || '').trim() === f);
+      return okQuery && okFilter;
+    }
+
+    function render() {
+      msg.textContent = '';
+      listEl.innerHTML = '';
+
+      const filtered = allPets.filter(matches);
+
+      if (!allPets.length) {
+        msg.textContent = 'Aún no tienes mascotas registradas.';
+        totalPetsEl.textContent = '0';
+        lastUpdatedEl.textContent = '—';
+        return;
+      }
+
+      if (!filtered.length) {
+        msg.textContent = 'No hay resultados para tu búsqueda.';
+      }
+
+      filtered.forEach((petRaw) => {
+        const pet = normalizePet(petRaw);
+
+        const card = document.createElement('article');
+        card.className = 'history-card';
+        card.tabIndex = 0;
+
+        const avatar = document.createElement('div');
+        avatar.className = 'history-avatar';
+        avatar.innerHTML = '🐾';
+
+        const body = document.createElement('div');
+        body.className = 'history-body';
+
+        const titleRow = document.createElement('div');
+        titleRow.className = 'history-title-row';
+
+        const title = document.createElement('h3');
+        title.className = 'history-title';
+        title.textContent = safeText(pet.name);
+
+        const badge = document.createElement('span');
+        badge.className = 'history-badge';
+        badge.textContent = safeText(pet.service);
+
+        titleRow.appendChild(title);
+        titleRow.appendChild(badge);
+
+        const meta = document.createElement('p');
+        meta.className = 'history-meta';
+        meta.textContent = `Especie: ${safeText(pet.species)} • Raza: ${safeText(pet.breed)} • Edad: ${safeText(pet.age)} año(s)`;
+
+        const bullets = document.createElement('ul');
+        bullets.className = 'history-bullets';
+
+        // ✅ Notas limpias (ya sin PATITAS|...)
+        const liNotes = document.createElement('li');
+        liNotes.innerHTML = `<b>Notas:</b> ${safeText(pet.cleanNotes)}`;
+
+        const liService = document.createElement('li');
+        liService.innerHTML = `<b>Servicio:</b> ${safeText(pet.service)}`;
+
+        // ✅ Aquí estaba el bug: tu código usaba pet.vaccines (no existe)
+        const liVacc = document.createElement('li');
+        liVacc.innerHTML = `<b>Vacunas:</b> ${safeText(pet.vaccineStatus)}`;
+
+        bullets.appendChild(liNotes);
+        bullets.appendChild(liService);
+        bullets.appendChild(liVacc);
+
+        body.appendChild(titleRow);
+        body.appendChild(meta);
+        body.appendChild(bullets);
+
+        card.appendChild(avatar);
+        card.appendChild(body);
+
+        listEl.appendChild(card);
+      });
+
+      totalPetsEl.textContent = allPets.length.toString();
+
+      const last = allPets
+        .map(p => p.createdAt || p.created_at || p.updatedAt || p.updated_at)
+        .filter(Boolean)
+        .map(d => new Date(d))
+        .filter(d => !Number.isNaN(d.getTime()))
+        .sort((a, b) => b.getTime() - a.getTime())[0];
+
+      lastUpdatedEl.textContent = last ? formatDate(last) : '—';
+
+      try {
+        const s = JSON.parse(localStorage.getItem('patitas_session') || '{}');
+        userNameMiniEl.textContent =
+          (s.user && (s.user.name || s.user.nombre)) ? (s.user.name || s.user.nombre) : (s.user?.email || '—');
+      } catch {
+        userNameMiniEl.textContent = '—';
+      }
+    }
+
+    async function load() {
+      msg.textContent = '';
+      listEl.innerHTML = '';
+
+      try {
+        const pets = await apiFetch('/api/pets');
+        allPets = Array.isArray(pets) ? pets : [];
+        render();
+      } catch (err) {
+        msg.textContent = err.message || 'Error al cargar el historial.';
+        if (err.status === 401) window.location.href = 'login.html';
+      }
+    }
+
+    searchEl.addEventListener('input', render);
+    filterEl.addEventListener('change', render);
+
+    load();
+  </script>
+  <script type="module" src="assets/nav-init.js"></script>
+</body>
+</html>

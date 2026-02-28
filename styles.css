@@ -1,0 +1,505 @@
+:root{
+  /* Verde opaco (principal) */
+  --patitas-green: #6da98f;
+  --patitas-green-dark: #5b947c;
+  --patitas-page: #f3f6f4;
+  --patitas-ink: #1f2a24;
+  --patitas-muted: rgba(31,42,36,.65);
+  --patitas-card: #ffffff;
+  --patitas-border: rgba(0,0,0,.08);
+}
+
+/* Normalización para que inputs y cajas NO se desborden */
+*, *::before, *::after { box-sizing: border-box; }
+
+/* Reset básico para evitar desalineaciones por margen default del navegador */
+html, body{ margin: 0; padding: 0; }
+body{ font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial; color: var(--patitas-ink); }
+
+/* Fondo general */
+.bg-patitas-page{ background: var(--patitas-page); }
+
+/* Contenedor tipo "plantilla" */
+.patitas-container{
+  width: min(1120px, calc(100% - 28px));
+  margin: 0 auto;
+}
+
+/* Topbar (similar a la imagen) */
+.patitas-topbar{
+  background: var(--patitas-green);
+  color: #fff;
+  box-shadow: 0 10px 30px rgba(0,0,0,.12);
+}
+.patitas-topbar .patitas-container{
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+  gap: 16px;
+  /* Un poco más compacto para que el “arriba” se vea bien en todas las páginas */
+  padding: 12px 0;
+}
+
+.patitas-logo-word{
+  font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial;
+  letter-spacing: 0.08em;
+  font-weight: 200;
+  /* Menos alto para evitar que la barra se “estire” y se vea rara */
+  font-size: clamp(34px, 4.6vw, 58px);
+  line-height: .95;
+}
+
+.patitas-nav{
+  display: flex;
+  align-items: center;
+  gap: 22px;
+  justify-content: center;
+}
+.patitas-nav-link{
+  color: rgba(255,255,255,.92);
+  text-decoration: none;
+  font-size: 15px;
+}
+.patitas-nav-link:hover{ color:#fff; text-decoration: underline; }
+
+.patitas-auth{
+  justify-self: end;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 14px;
+}
+.patitas-auth-link{ color: rgba(255,255,255,.95); text-decoration:none; }
+.patitas-auth-link:hover{ text-decoration: underline; }
+.patitas-auth-sep{ opacity: .7; }
+
+/* Botón "Cerrar sesión" (inyectado por assets/nav-init.js) */
+.patitas-auth-btn{
+  appearance: none;
+  border: 1px solid rgba(255,255,255,.55);
+  background: rgba(255,255,255,.12);
+  color: #fff;
+  padding: 7px 12px;
+  border-radius: 10px;
+  cursor: pointer;
+  font-size: 13px;
+}
+.patitas-auth-btn:hover{ background: rgba(255,255,255,.18); }
+
+/* Main spacing */
+.patitas-main{
+  padding: 26px 0 60px;
+  /* Para micro-movimiento con rueda del mouse (assets/page-motion.js) */
+  will-change: transform;
+  transition: transform 160ms ease-out;
+}
+
+/* HERO */
+.patitas-hero{
+  position: relative;
+  border-radius: 10px;
+  overflow: hidden;
+  background: #dfeee6;
+  border: 1px solid var(--patitas-border);
+  box-shadow: 0 18px 45px rgba(0,0,0,.10);
+}
+
+/* Accesibilidad (texto solo para lectores de pantalla) */
+.sr-only{
+  position: absolute !important;
+  width: 1px !important;
+  height: 1px !important;
+  padding: 0 !important;
+  margin: -1px !important;
+  overflow: hidden !important;
+  clip: rect(0, 0, 0, 0) !important;
+  white-space: nowrap !important;
+  border: 0 !important;
+}
+
+/* Imagen (puedes cambiarla por una tuya) */
+.patitas-hero-media{
+  height: clamp(320px, 40vw, 420px);
+  position: relative;
+  overflow: hidden;
+  /* La imagen se controla por JS para el carrusel (variables CSS) */
+  --patitas-hero-image: url('https://images.unsplash.com/photo-1518791841217-8f162f1e1131?auto=format&fit=crop&w=1400&q=60');
+  --patitas-hero-image-next: var(--patitas-hero-image);
+  --patitas-hero-fade: 0;
+  /* El fondo ahora vive en capas (::before y ::after) para poder animar la transición */
+  background: none;
+  will-change: transform;
+  transition: transform 180ms ease-out;
+}
+
+/* Capas para transición suave entre imágenes del HERO */
+.patitas-hero-media::before,
+.patitas-hero-media::after{
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(90deg, rgba(0,0,0,.25) 0%, rgba(0,0,0,.05) 45%, rgba(0,0,0,0) 70%),
+    var(--patitas-hero-image);
+  background-size: cover, cover;
+  background-position: center, center;
+}
+
+.patitas-hero-media::after{
+  background-image:
+    linear-gradient(90deg, rgba(0,0,0,.25) 0%, rgba(0,0,0,.05) 45%, rgba(0,0,0,0) 70%),
+    var(--patitas-hero-image-next);
+  opacity: var(--patitas-hero-fade);
+  transition: opacity 650ms ease;
+}
+
+/* =========================
+   FOOTER (estilo moderno)
+   ========================= */
+.patitas-footer{
+  margin-top: 60px;
+  background: radial-gradient(900px 500px at 80% 10%, rgba(255,255,255,.08), transparent 60%),
+              linear-gradient(180deg, #0b1230 0%, #081027 100%);
+  color: rgba(255,255,255,.86);
+}
+
+.patitas-footer-grid{
+  display: grid;
+  grid-template-columns: 1.2fr .8fr 1fr;
+  gap: 42px;
+  padding: 56px 0 34px;
+}
+
+.patitas-footer-logo{
+  font-weight: 300;
+  letter-spacing: .08em;
+  font-size: 26px;
+  color: #fff;
+}
+
+.patitas-footer-text{
+  margin: 14px 0 0;
+  max-width: 40ch;
+  line-height: 1.7;
+  color: rgba(255,255,255,.72);
+}
+
+.patitas-footer h4{
+  margin: 0 0 14px;
+  font-size: 18px;
+  color: #fff;
+}
+
+.patitas-footer a{
+  display: block;
+  color: rgba(255,255,255,.72);
+  text-decoration: none;
+  margin: 10px 0;
+}
+
+.patitas-footer a:hover{ color:#fff; text-decoration: underline; }
+
+.patitas-footer-card{
+  background: rgba(255,255,255,.06);
+  border: 1px solid rgba(255,255,255,.10);
+  border-radius: 18px;
+  padding: 26px;
+  box-shadow: 0 18px 50px rgba(0,0,0,.25);
+}
+
+.patitas-footer-form{
+  display: flex;
+  gap: 10px;
+  margin-top: 16px;
+}
+
+.patitas-footer-form input{
+  flex: 1;
+  height: 46px;
+  border-radius: 12px;
+  border: 1px solid rgba(255,255,255,.14);
+  background: rgba(255,255,255,.07);
+  color: #fff;
+  padding: 0 14px;
+  outline: none;
+}
+
+.patitas-footer-form input::placeholder{ color: rgba(255,255,255,.55); }
+
+.patitas-footer-form button{
+  width: 52px;
+  height: 46px;
+  border-radius: 12px;
+  border: 1px solid rgba(255,255,255,.14);
+  background: rgba(109,169,143,.20);
+  color: #fff;
+  cursor: pointer;
+  transition: transform .12s ease, background .12s ease;
+}
+
+.patitas-footer-form button:hover{ transform: translateY(-1px); background: rgba(109,169,143,.30); }
+
+.patitas-footer-bottom{
+  border-top: 1px solid rgba(255,255,255,.10);
+  padding: 14px 0 22px;
+  font-size: 13px;
+  color: rgba(255,255,255,.60);
+}
+
+.patitas-footer-bottom .patitas-container{
+  display: flex;
+  justify-content: space-between;
+  gap: 14px;
+  flex-wrap: wrap;
+}
+
+@media (max-width: 920px){
+  .patitas-footer-grid{ grid-template-columns: 1fr; gap: 22px; }
+  .patitas-footer-text{ max-width: 60ch; }
+}
+
+.patitas-hero-overlay{
+  position: absolute;
+  left: 26px;
+  top: 26px;
+  color: #fff;
+  max-width: 520px;
+}
+
+.patitas-hero-badge{
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  border-radius: 999px;
+  background: rgba(255,255,255,.18);
+  border: 1px solid rgba(255,255,255,.22);
+  backdrop-filter: blur(8px);
+  font-size: 13px;
+}
+
+.patitas-hero-title{
+  margin-top: 12px;
+  font-size: clamp(30px, 4vw, 44px);
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  line-height: 1.06;
+}
+
+.patitas-hero-subtitle{
+  margin-top: 10px;
+  font-size: 16px;
+  color: rgba(255,255,255,.92);
+}
+
+.patitas-hero-cta{
+  margin-top: 16px;
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.patitas-btn{
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 10px 14px;
+  border-radius: 8px;
+  background: var(--patitas-green);
+  color: #fff;
+  text-decoration: none;
+  font-weight: 700;
+  border: 1px solid rgba(255,255,255,.18);
+  box-shadow: 0 10px 20px rgba(0,0,0,.12);
+}
+.patitas-btn:hover{ background: var(--patitas-green-dark); }
+
+.patitas-btn-ghost{
+  background: rgba(255,255,255,.14);
+  border: 1px solid rgba(255,255,255,.26);
+}
+.patitas-btn-ghost:hover{ background: rgba(255,255,255,.20); }
+
+/* Chip "Fully Responsive" */
+.patitas-hero-chip{
+  position: absolute;
+  right: 22px;
+  bottom: 80px;
+  background: rgba(109,169,143,.75);
+  color: #fff;
+  padding: 16px 24px;
+  font-size: clamp(20px, 3vw, 34px);
+  font-weight: 700;
+}
+
+/* Footer bar del slider */
+.patitas-hero-foot{
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 12px 16px;
+  background: var(--patitas-green);
+  color: rgba(255,255,255,.92);
+}
+.patitas-hours{ font-size: 14px; }
+.patitas-arrows{ display:flex; gap: 18px; align-items:center; }
+.patitas-arrow{
+  width: 34px;
+  height: 34px;
+  border-radius: 999px;
+  display:grid;
+  place-items:center;
+  background: rgba(255,255,255,.14);
+  border: 1px solid rgba(255,255,255,.22);
+}
+
+/* Features */
+.patitas-features{
+  margin-top: 26px;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 18px;
+}
+
+.patitas-feature{
+  background: var(--patitas-card);
+  border: 1px solid var(--patitas-border);
+  border-radius: 10px;
+  padding: 22px 18px;
+  text-align: center;
+  box-shadow: 0 18px 45px rgba(0,0,0,.06);
+}
+
+.patitas-feature-icon{
+  width: 74px;
+  height: 74px;
+  border-radius: 999px;
+  margin: 0 auto 14px;
+  display:grid;
+  place-items:center;
+  background: rgba(109,169,143,.12);
+  color: var(--patitas-green-dark);
+  font-size: 28px;
+}
+
+.patitas-feature-title{
+  font-size: 22px;
+  font-weight: 800;
+  color: var(--patitas-ink);
+}
+
+.patitas-feature-text{
+  margin-top: 8px;
+  color: var(--patitas-muted);
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+/* =========================
+   Carrusel de servicios (Index)
+   ========================= */
+.patitas-services{
+  margin-top: 26px;
+}
+.patitas-services-head{
+  text-align: center;
+  margin: 10px 0 14px;
+}
+.patitas-section-title{
+  margin: 0;
+  font-size: 22px;
+  letter-spacing: .01em;
+}
+.patitas-section-subtitle{
+  margin: 8px auto 0;
+  max-width: 680px;
+  color: var(--patitas-muted);
+  font-size: 14px;
+}
+
+.patitas-services-wrap{
+  position: relative;
+  background: rgba(255,255,255,.75);
+  border: 1px solid var(--patitas-border);
+  border-radius: 18px;
+  box-shadow: 0 18px 50px rgba(0,0,0,.08);
+  padding: 16px 18px;
+}
+
+.patitas-services-track{
+  display: flex;
+  flex-wrap: wrap;
+  gap: 14px;
+  justify-content: center;
+  padding: 6px 2px;
+}
+.patitas-services-track::-webkit-scrollbar{ display:none; }
+
+.patitas-service-card{
+  background: #fff;
+  border: 2px solid rgba(109,169,143,.35);
+  border-radius: 16px;
+  padding: 16px 14px;
+  text-align: center;
+  width: 168px;
+  display:flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 118px;
+  box-shadow: 0 10px 24px rgba(0,0,0,.08);
+  /* Sin animaciones al hover (debe verse estático) */
+  transition: none;
+}
+
+.patitas-service-icon{
+  width: 56px;
+  height: 56px;
+  border-radius: 999px;
+  background: rgba(109,169,143,.14);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  color: var(--patitas-green-dark);
+  font-size: 22px;
+  margin-bottom: 10px;
+}
+.patitas-service-name{
+  font-weight: 800;
+  font-size: 15px;
+  margin-bottom: 4px;
+}
+.patitas-service-price{
+  font-size: 12px;
+  color: rgba(31,42,36,.72);
+}
+.patitas-service-price b{ color: var(--patitas-green-dark); }
+
+@media (max-width: 640px){
+  .patitas-service-card{ width: 150px; }
+}
+
+/* Responsivo */
+@media (max-width: 960px){
+  .patitas-topbar .patitas-container{ grid-template-columns: 1fr; justify-items:center; }
+  .patitas-auth{ justify-self: center; }
+  .patitas-logo-word{ font-size: 44px; }
+  .patitas-hero-overlay{ left: 16px; right: 16px; }
+  .patitas-hero-chip{ right: 14px; bottom: 92px; }
+  .patitas-features{ grid-template-columns: 1fr; }
+}
+
+
+/* Logo veterinaria (estatico y grande) */
+.patitas-logo{
+  display:flex;
+  align-items:center;
+  gap:16px;
+}
+
+.patitas-logo-img{
+  width:120px;
+  height:120px;
+  object-fit:contain;
+}

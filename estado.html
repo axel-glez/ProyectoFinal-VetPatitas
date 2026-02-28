@@ -1,0 +1,191 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Estado de servicios | Patitas</title>
+  <link rel="stylesheet" href="styles.css" />
+  <link rel="stylesheet" href="stylesHistorial.css" />
+</head>
+
+<body class="bg-patitas-page">
+  
+<header class="patitas-topbar">
+    <div class="patitas-container">
+      <div class="patitas-logo">
+        <img src="assets/logo.png" class="patitas-logo-img" alt="Logo Patitas">
+        <span class="patitas-logo-word">PATITAS</span>
+      </div>
+
+      <nav class="patitas-nav">
+        <a href="index.html" class="patitas-nav-link">Inicio</a>
+        <a href="registro.html" class="patitas-nav-link">Registro</a>
+        <a href="Historial.html" class="patitas-nav-link">Historial</a>
+        <a href="estado.html" class="patitas-nav-link" aria-current="page">Estado</a>
+      </nav>
+
+      <div class="patitas-auth"></div>
+    </div>
+  </header>
+
+
+  <main class="patitas-main">
+    <div class="patitas-container">
+      <section class="patitas-admin-hero" style="margin-bottom:18px;">
+        <div>
+          <h1 class="patitas-admin-title">Estado de mis servicios</h1>
+          <p class="patitas-admin-subtitle">Aquí ves si el servicio ya se completó, si hubo complicación y notas del veterinario/admin.</p>
+        </div>
+      </section>
+
+      <section class="patitas-admin-card">
+        <div class="history-toolbar">
+          <div class="field">
+            <label for="search">Buscar</label>
+            <input id="search" type="text" placeholder="Buscar por mascota o servicio..." />
+          </div>
+
+          <div class="field">
+            <label for="filter">Filtro</label>
+            <select id="filter">
+              <option value="all">Todos</option>
+              <option value="pendiente">Pendiente</option>
+              <option value="completado">Completado</option>
+            </select>
+          </div>
+        </div>
+
+        <div id="list" class="history-list" style="margin-top:18px;"></div>
+        <p id="msg" class="muted" style="margin-top:12px;"></p>
+      </section>
+    </div>
+  </main>
+
+  <footer class="patitas-footer">
+    <div class="patitas-container patitas-footer-grid">
+      <div>
+        <div class="patitas-footer-logo">PATITAS</div>
+        <p class="patitas-footer-text">
+          Fundada en <b>2026</b>, cuidamos a tu mascota con medicina, cariño y atención moderna
+          para que siempre esté en las mejores manos.
+        </p>
+      </div>
+      <div>
+        <h4>Menú</h4>
+        <a href="index.html">Inicio</a>
+        <a href="registro.html">Registro</a>
+        <a href="Historial.html">Historial</a>
+        <a href="estado.html">Estado</a>
+      </div>
+      <div class="patitas-footer-card">
+        <h4>Recibe novedades</h4>
+        <p class="patitas-footer-text" style="margin-top:0;max-width:none;">Suscríbete al boletín de <b>Patitas</b>.</p>
+        <form class="patitas-footer-form" onsubmit="return false;">
+          <input type="email" placeholder="Correo electrónico" aria-label="Correo electrónico" />
+          <button type="submit" aria-label="Enviar">→</button>
+        </form>
+      </div>
+    </div>
+
+    <div class="patitas-footer-bottom">
+      <div class="patitas-container">
+        <span>© 2026 Patitas. Todos los derechos reservados.</span>
+        <span>Hecho con 🐾</span>
+      </div>
+    </div>
+  </footer>
+
+  <script type="module" src="assets/nav-init.js"></script>
+  <script src="app-auth.js"></script>
+  <script>
+    if (!requireLogin()) {}
+
+    const listEl = document.getElementById("list");
+    const msg = document.getElementById("msg");
+    const searchEl = document.getElementById("search");
+    const filterEl = document.getElementById("filter");
+
+    let pets = [];
+
+    function safe(v){ return (v == null || String(v).trim() === "") ? "—" : String(v); }
+
+    function pill(status){
+      const s = (status || "pendiente").toLowerCase();
+      const label = s === "completado" ? "Completado ✅" : "Pendiente ⏳";
+      return `<span class="history-badge">${label}</span>`;
+    }
+
+    function fmtDate(d){
+      try{
+        const dt = new Date(d);
+        if (Number.isNaN(dt.getTime())) return "—";
+        return dt.toLocaleString("es-MX");
+      }catch{
+        return "—";
+      }
+    }
+
+    function render(){
+      const q = (searchEl.value || "").toLowerCase().trim();
+      const f = filterEl.value;
+
+      const filtered = pets.filter(p => {
+        const hay = [p.name, p.service, p.status].join(" ").toLowerCase();
+        const okQ = !q || hay.includes(q);
+        const okF = (f === "all") || ((p.status || "pendiente") === f);
+        return okQ && okF;
+      });
+
+      if (!pets.length){
+        listEl.innerHTML = "";
+        msg.textContent = "Aún no tienes servicios registrados.";
+        return;
+      }
+
+      if (!filtered.length){
+        listEl.innerHTML = "";
+        msg.textContent = "No hay resultados.";
+        return;
+      }
+
+      msg.textContent = "";
+
+      listEl.innerHTML = filtered.map(p => `
+        <article class="history-card">
+          <div class="history-avatar">🐾</div>
+          <div class="history-body">
+            <div class="history-title-row">
+              <h3 class="history-title">${safe(p.name)}</h3>
+              ${pill(p.status)}
+            </div>
+
+            <p class="history-meta">
+              Servicio: <b>${safe(p.service)}</b>
+              • Complicación: <b>${p.adminComplication ? "Sí" : "No"}</b>
+            </p>
+
+            <ul class="history-bullets">
+              <li><b>Notas del servicio:</b> ${safe(p.adminNotes)}</li>
+              <li><b>Completado en:</b> ${p.completedAt ? fmtDate(p.completedAt) : "—"}</li>
+            </ul>
+          </div>
+        </article>
+      `).join("");
+    }
+
+    async function load(){
+      try{
+        pets = await apiFetch("/api/pets");
+        render();
+      }catch(err){
+        msg.textContent = err.message || "Error al cargar.";
+        if (err.status === 401) window.location.href = "login.html";
+      }
+    }
+
+    searchEl.addEventListener("input", render);
+    filterEl.addEventListener("change", render);
+    load();
+  </script>
+</body>
+</html>

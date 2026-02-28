@@ -1,0 +1,355 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+:root {
+  /* Paleta Patitas (verde opaco) */
+  --blue: #6da98f;
+  --blue-dark: #5b947c;
+  --blue-soft: #eaf3ef;
+  --white: #ffffff;
+  --gray: #555;
+  --border: #ddd;
+  --bg: #f5f7fb;
+}
+
+body {
+  font-family: Arial, Helvetica, sans-serif;
+  background: var(--bg);
+  color: #111;
+  line-height: 1.5;
+}
+
+/*
+  Nota:
+  Antes este CSS estilaba el elemento <header> directamente.
+  Ahora usamos un header compartido (patitas-topbar) en todas las páginas,
+  así que movemos los estilos del header “viejo” a una clase para evitar
+  que se rompa la barra superior nueva.
+*/
+
+.legacy-header {
+  background: var(--blue);
+  color: var(--white);
+  padding: 12px 24px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.logo img {
+  width: 40px;
+}
+
+.legacy-header nav a {
+  color: var(--white);
+  text-decoration: none;
+  margin-left: 20px;
+  font-weight: 500;
+}
+
+.legacy-header nav a:hover {
+  text-decoration: underline;
+}
+
+.card {
+  background: var(--white);
+  max-width: 1100px;
+  margin: 30px auto;
+  padding: 30px;
+  border-radius: 12px;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.05);
+}
+
+.hero {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: 30px;
+}
+
+.hero h2 {
+  font-size: 32px;
+  margin-bottom: 10px;
+}
+
+.muted {
+  color: var(--gray);
+}
+
+.hero__cta {
+  margin: 20px 0;
+  display: flex;
+  gap: 15px;
+}
+
+.btn {
+  padding: 12px 18px;
+  border-radius: 8px;
+  font-weight: 600;
+  text-decoration: none;
+  border: none;
+  cursor: pointer;
+}
+
+.btn-primary {
+  background: var(--blue);
+  color: var(--white);
+}
+
+.btn-primary:hover {
+  background: var(--blue-dark);
+}
+
+.btn-ghost {
+  border: 2px solid var(--blue);
+  color: var(--blue);
+  background: transparent;
+}
+
+.btn-ghost:hover {
+  background: var(--blue-soft);
+}
+
+.chips {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.chip {
+  background: var(--blue-soft);
+  color: var(--blue);
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 14px;
+}
+
+.hero__panel {
+  background: var(--blue-soft);
+  border-radius: 12px;
+  padding: 20px;
+}
+
+.mini {
+  margin-bottom: 15px;
+}
+
+.small {
+  font-size: 14px;
+}
+
+.section-header {
+  background: var(--blue);
+  padding: 20px;
+  border-radius: 10px;
+  margin-bottom: 25px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.section-header h2 {
+  color: var(--white);
+}
+
+.section-header .muted {
+  color: var(--white);
+}
+
+.badge {
+  background: var(--white);
+  color: var(--blue);
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.form {
+  display: grid;
+  gap: 25px;
+}
+
+.fieldset {
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 20px;
+}
+
+legend {
+  padding: 0 10px;
+  font-weight: bold;
+  color: var(--blue);
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 15px;
+}
+
+.field label {
+  margin-bottom: 6px;
+  font-weight: 600;
+}
+
+.field input,
+.field select,
+.field textarea {
+  padding: 10px;
+  border-radius: 6px;
+  border: 1px solid var(--border);
+  font-size: 15px;
+}
+
+.field input:focus,
+.field select:focus,
+.field textarea:focus {
+  outline: none;
+  border-color: var(--blue);
+}
+
+.full {
+  grid-column: 1 / -1;
+}
+
+.actions {
+  display: flex;
+  gap: 15px;
+}
+
+.sep {
+  margin-top: 30px;
+  border: none;
+  height: 1px;
+  background: var(--border);
+}
+
+@media (max-width: 900px) {
+  .hero {
+    grid-template-columns: 1fr;
+  }
+
+  header {
+    flex-direction: column;
+    gap: 10px;
+  }
+}
+
+/* =========================
+   FOOTER (Patitas)
+   ========================= */
+.patitas-container{
+  width: min(1120px, calc(100% - 28px));
+  margin: 0 auto;
+}
+
+.patitas-footer{
+  margin-top: 60px;
+  background: radial-gradient(900px 500px at 80% 10%, rgba(255,255,255,.08), transparent 60%),
+              linear-gradient(180deg, #0b1230 0%, #081027 100%);
+  color: rgba(255,255,255,.86);
+}
+
+.patitas-footer-grid{
+  display: grid;
+  grid-template-columns: 1.2fr .8fr 1fr;
+  gap: 42px;
+  padding: 56px 0 34px;
+}
+
+.patitas-footer-logo{
+  font-weight: 300;
+  letter-spacing: .08em;
+  font-size: 26px;
+  color: #fff;
+}
+
+.patitas-footer-text{
+  margin: 14px 0 0;
+  max-width: 40ch;
+  line-height: 1.7;
+  color: rgba(255,255,255,.72);
+}
+
+.patitas-footer h4{
+  margin: 0 0 14px;
+  font-size: 18px;
+  color: #fff;
+}
+
+.patitas-footer a{
+  display: block;
+  color: rgba(255,255,255,.72);
+  text-decoration: none;
+  margin: 10px 0;
+}
+
+.patitas-footer a:hover{ color:#fff; text-decoration: underline; }
+
+.patitas-footer-card{
+  background: rgba(255,255,255,.06);
+  border: 1px solid rgba(255,255,255,.10);
+  border-radius: 18px;
+  padding: 26px;
+  box-shadow: 0 18px 50px rgba(0,0,0,.25);
+}
+
+.patitas-footer-form{
+  display: flex;
+  gap: 10px;
+  margin-top: 16px;
+}
+
+.patitas-footer-form input{
+  flex: 1;
+  height: 46px;
+  border-radius: 12px;
+  border: 1px solid rgba(255,255,255,.14);
+  background: rgba(255,255,255,.07);
+  color: #fff;
+  padding: 0 14px;
+  outline: none;
+}
+
+.patitas-footer-form input::placeholder{ color: rgba(255,255,255,.55); }
+
+.patitas-footer-form button{
+  width: 52px;
+  height: 46px;
+  border-radius: 12px;
+  border: 1px solid rgba(255,255,255,.14);
+  background: rgba(109,169,143,.20);
+  color: #fff;
+  cursor: pointer;
+  transition: transform .12s ease, background .12s ease;
+}
+
+.patitas-footer-form button:hover{ transform: translateY(-1px); background: rgba(109,169,143,.30); }
+
+.patitas-footer-bottom{
+  border-top: 1px solid rgba(255,255,255,.10);
+  padding: 14px 0 22px;
+  font-size: 13px;
+  color: rgba(255,255,255,.60);
+}
+
+.patitas-footer-bottom .patitas-container{
+  display: flex;
+  justify-content: space-between;
+  gap: 14px;
+  flex-wrap: wrap;
+}
+
+@media (max-width: 920px){
+  .patitas-footer-grid{ grid-template-columns: 1fr; gap: 22px; }
+  .patitas-footer-text{ max-width: 60ch; }
+}

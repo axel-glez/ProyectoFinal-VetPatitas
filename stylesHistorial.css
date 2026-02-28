@@ -1,0 +1,285 @@
+@import url("stylesregistro.css");
+
+.panel{
+  border:1px solid var(--border, #e6e6e6);
+  border-radius:14px;
+  background:#fafbfc;
+  padding:14px;
+  display:flex;
+  flex-direction:column;
+  gap:10px;
+}
+
+.panel h3{
+  font-size:1.05rem;
+  font-weight:950;
+}
+
+.panel-top{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:10px;
+}
+
+.kv{
+  display:flex;
+  align-items:flex-start;
+  justify-content:space-between;
+  gap:12px;
+  background:#fff;
+  border:1px solid var(--border, #e6e6e6);
+  border-radius:12px;
+  padding:10px;
+}
+
+.k{
+  font-weight:900;
+  color:#333;
+  font-size:.9rem;
+}
+
+.v{
+  color:#111;
+  font-size:.95rem;
+  text-align:right;
+}
+
+.expediente{
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.visit{
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+@media (max-width: 900px){
+  .expediente{
+    grid-template-columns: 1fr;
+  }
+  .visit{
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ====== Nuevo historial tipo tarjetas ====== */
+
+.history-toolbar{
+  display:grid;
+  grid-template-columns: 1fr 220px;
+  gap:14px;
+  margin-top:14px;
+  align-items:end;
+}
+
+.history-toolbar .field label{
+  display:block;
+  font-weight:900;
+  margin-bottom:8px;
+}
+
+.history-toolbar input,
+.history-toolbar select{
+  width:100%;
+}
+
+.history-list{
+  display:grid;
+  gap:14px;
+  margin-top:18px;
+}
+
+.history-card{
+  display:grid;
+  grid-template-columns: 84px 1fr;
+  gap:14px;
+  align-items:start;
+  padding:14px;
+  border:1px solid var(--border, #e6e6e6);
+  border-radius:16px;
+  background:#fff;
+  box-shadow: 0 18px 40px rgba(0,0,0,.06);
+}
+
+.history-avatar{
+  width:72px;
+  height:72px;
+  border-radius:16px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:28px;
+  background: radial-gradient(circle at 30% 20%, rgba(255,255,255,.75), rgba(255,255,255,.2)) ,
+              linear-gradient(180deg, rgba(106,170,140,.55), rgba(106,170,140,.20));
+  border:1px solid rgba(106,170,140,.35);
+}
+
+.history-title-row{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+}
+
+.history-title{
+  font-size:1.25rem;
+  font-weight:950;
+  margin:0;
+}
+
+.history-badge{
+  display:inline-flex;
+  align-items:center;
+  gap:8px;
+  padding:8px 12px;
+  border-radius:999px;
+  background: rgba(106,170,140,.18);
+  border: 1px solid rgba(106,170,140,.35);
+  color: #245b45;
+  font-weight:900;
+  font-size:.85rem;
+  white-space:nowrap;
+}
+
+.history-meta{
+  margin:6px 0 8px;
+  color:#3b3b3b;
+}
+
+/* ✅ bullets más “limpios” y notas largas se acomodan */
+.history-bullets{
+  margin:0;
+  padding-left:0;
+  list-style:none;
+  display:grid;
+  gap:6px;
+}
+
+.history-bullets li{
+  color:#2a2a2a;
+  line-height:1.35;
+  overflow-wrap:anywhere; /* corta textos largos (notas) sin romper el layout */
+}
+
+@media (max-width: 900px){
+  .history-toolbar{
+    grid-template-columns: 1fr;
+  }
+  .history-card{
+    grid-template-columns: 1fr;
+  }
+  .history-avatar{
+    width:64px;
+    height:64px;
+  }
+}
+
+/* =========================
+   FOOTER (Patitas)
+   ========================= */
+.patitas-container{
+  width: min(1120px, calc(100% - 28px));
+  margin: 0 auto;
+}
+
+.patitas-footer{
+  margin-top: 60px;
+  background: radial-gradient(900px 500px at 80% 10%, rgba(255,255,255,.08), transparent 60%),
+              linear-gradient(180deg, #0b1230 0%, #081027 100%);
+  color: rgba(255,255,255,.86);
+}
+
+.patitas-footer-grid{
+  display: grid;
+  grid-template-columns: 1.2fr .8fr 1fr;
+  gap: 42px;
+  padding: 56px 0 34px;
+}
+
+.patitas-footer-logo{
+  font-weight: 300;
+  letter-spacing: .08em;
+  font-size: 26px;
+  color: #fff;
+}
+
+.patitas-footer-text{
+  margin: 14px 0 0;
+  max-width: 40ch;
+  line-height: 1.7;
+  color: rgba(255,255,255,.72);
+}
+
+.patitas-footer h4{
+  margin: 0 0 14px;
+  font-size: 18px;
+  color: #fff;
+}
+
+.patitas-footer a{
+  display: block;
+  color: rgba(255,255,255,.72);
+  text-decoration: none;
+  margin: 10px 0;
+}
+
+.patitas-footer a:hover{ color:#fff; text-decoration: underline; }
+
+.patitas-footer-card{
+  background: rgba(255,255,255,.06);
+  border: 1px solid rgba(255,255,255,.10);
+  border-radius: 18px;
+  padding: 26px;
+  box-shadow: 0 18px 50px rgba(0,0,0,.25);
+}
+
+.patitas-footer-form{
+  display: flex;
+  gap: 10px;
+  margin-top: 16px;
+}
+
+.patitas-footer-form input{
+  flex: 1;
+  height: 46px;
+  border-radius: 12px;
+  border: 1px solid rgba(255,255,255,.14);
+  background: rgba(255,255,255,.07);
+  color: #fff;
+  padding: 0 14px;
+  outline: none;
+}
+
+.patitas-footer-form input::placeholder{ color: rgba(255,255,255,.55); }
+
+.patitas-footer-form button{
+  width: 52px;
+  height: 46px;
+  border-radius: 12px;
+  border: 1px solid rgba(255,255,255,.14);
+  background: rgba(109,169,143,.20);
+  color: #fff;
+  cursor: pointer;
+  transition: transform .12s ease, background .12s ease;
+}
+
+.patitas-footer-form button:hover{ transform: translateY(-1px); background: rgba(109,169,143,.30); }
+
+.patitas-footer-bottom{
+  border-top: 1px solid rgba(255,255,255,.10);
+  padding: 14px 0 22px;
+  font-size: 13px;
+  color: rgba(255,255,255,.60);
+}
+
+.patitas-footer-bottom .patitas-container{
+  display: flex;
+  justify-content: space-between;
+  gap: 14px;
+  flex-wrap: wrap;
+}
+
+@media (max-width: 920px){
+  .patitas-footer-grid{ grid-template-columns: 1fr; gap: 22px; }
+  .patitas-footer-text{ max-width: 60ch; }
+}

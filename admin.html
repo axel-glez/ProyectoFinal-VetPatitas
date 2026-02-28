@@ -1,0 +1,494 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Administración | Patitas</title>
+  <link rel="stylesheet" href="styles.css" />
+  <link rel="stylesheet" href="admin.css" />
+</head>
+
+<body class="bg-patitas-page">
+  
+<header class="patitas-topbar">
+    <div class="patitas-container">
+      <div class="patitas-logo">
+        <img src="assets/logo.png" class="patitas-logo-img" alt="Logo Patitas">
+        <span class="patitas-logo-word">PATITAS</span>
+      </div>
+
+      <nav class="patitas-nav">
+        <a href="index.html" class="patitas-nav-link">Inicio</a>
+        <a href="registro.html" class="patitas-nav-link">Registro</a>
+        <a href="Historial.html" class="patitas-nav-link">Historial</a>
+        <a href="estado.html" class="patitas-nav-link">Estado</a>
+        <a href="admin.html" class="patitas-nav-link" aria-current="page">Administración</a>
+      </nav>
+
+      <div class="patitas-auth">
+        <span id="who" class="patitas-auth-who" title="Usuario"></span>
+        <span class="patitas-auth-sep">|</span>
+        <button id="logout" class="patitas-auth-btn" type="button">Cerrar sesión</button>
+      </div>
+    </div>
+  </header>
+
+
+  <main class="patitas-main">
+    <div class="patitas-container">
+      <section class="patitas-admin-hero">
+        <div>
+          <h1 class="patitas-admin-title">Panel de administración</h1>
+          <p class="patitas-admin-subtitle">Gestión general de mascotas registradas (solo administrador).</p>
+        </div>
+
+        <div class="patitas-admin-actions">
+          <div class="patitas-admin-search">
+            <label class="patitas-sr-only" for="q">Buscar</label>
+            <input id="q" class="patitas-admin-input" placeholder="Buscar por nombre o propietario…" />
+          </div>
+          <button id="reload" class="patitas-admin-btn" type="button">Actualizar</button>
+        </div>
+      </section>
+
+      <section class="patitas-admin-card" aria-label="Tabla de mascotas">
+        <div class="patitas-admin-card-head">
+          <h2 class="patitas-admin-card-title">Mascotas registradas</h2>
+          <span class="patitas-admin-pill" id="count">—</span>
+        </div>
+
+        <div class="patitas-admin-table-wrap">
+          <table class="patitas-admin-table">
+            <thead>
+              <tr>
+                <th>Mascota</th>
+                <th>Especie</th>
+                <th>Propietario</th>
+                <th>Teléfono</th>
+                <th>Estado</th>
+                <th class="patitas-tx-right">Acciones</th>
+              </tr>
+            </thead>
+            <tbody id="rows"></tbody>
+          </table>
+        </div>
+
+        <p id="msg" class="patitas-admin-msg" style="display:none;"></p>
+      </section>
+    </div>
+  </main>
+
+  <script type="module">
+    import { requireAdmin, getToken, clearSession } from "./assets/auth.js";
+
+    const user = await requireAdmin();
+    const label = user?.name ? user.name : (user?.email || "Usuario");
+    document.getElementById("who").textContent = `${label} • ${user.role}`;
+
+    document.getElementById("logout").onclick = () => {
+      clearSession();
+      window.location.href = "login.html";
+    };
+
+    const rows = document.getElementById("rows");
+    const msg = document.getElementById("msg");
+    const q = document.getElementById("q");
+    const count = document.getElementById("count");
+
+    let allPets = [];
+
+    function showMsg(text) {
+      msg.textContent = text;
+      msg.style.display = "block";
+    }
+    function hideMsg(){ msg.style.display = "none"; }
+
+    // ---------- Modal ----------
+    const modal = document.getElementById("petModal");
+    const modalClose = document.getElementById("petModalClose");
+
+    function norm(v){ return (v == null || v === "") ? "—" : String(v); }
+
+    function parseNotes(notesRaw){
+      const raw = (notesRaw || "").trim();
+      if (!raw) return { raw: "", kv: {} };
+      if (!raw.includes("PATITAS|")) return { raw, kv: {} };
+
+      const after = raw.split("PATITAS|").slice(1).join("PATITAS|");
+      const parts = after.split(";").map(s => s.trim()).filter(Boolean);
+      const kv = {};
+      for (const p of parts) {
+        const i = p.indexOf("=");
+        if (i === -1) continue;
+        kv[p.slice(0,i).trim()] = p.slice(i+1).trim();
+      }
+      return { raw, kv };
+    }
+
+    function openModal(p){
+      const parsed = parseNotes(p.notes);
+      const tipoServicio = p.service || parsed.kv.tipoServicio || "—";
+      const vacunas = p.vaccineStatus || parsed.kv.vacunasEstado || "—";
+      const notas = (p.adminNotes && p.adminNotes.trim())
+        ? p.adminNotes
+        : (parsed.kv.notas || (p.notes && !String(p.notes).includes("PATITAS|") ? p.notes : "") || "—");
+
+      document.getElementById("m_name").textContent = norm(p.name);
+      document.getElementById("m_species").textContent = norm(p.species);
+      document.getElementById("m_breed").textContent = norm(p.breed);
+      document.getElementById("m_age").textContent = (p.age != null) ? `${p.age} año(s)` : "—";
+      document.getElementById("m_owner").textContent = norm(p.ownerName);
+      document.getElementById("m_phone").textContent = norm(p.ownerPhone);
+      document.getElementById("m_service").textContent = tipoServicio;
+      document.getElementById("m_vaccines").textContent = vacunas;
+      document.getElementById("m_notes").textContent = norm(notas);
+
+      document.getElementById("m_status").textContent = norm(p.status || "pendiente");
+      document.getElementById("m_complication").textContent = p.adminComplication ? "Sí" : "No";
+      document.getElementById("m_completedAt").textContent = p.completedAt ? new Date(p.completedAt).toLocaleString("es-MX") : "—";
+
+      modal.classList.add("open");
+      modal.setAttribute("aria-hidden", "false");
+    }
+
+    function closeModal(){
+      modal.classList.remove("open");
+      modal.setAttribute("aria-hidden", "true");
+    }
+
+    modalClose.addEventListener("click", closeModal);
+    modal.addEventListener("click", (e) => {
+      const t = e.target;
+      if (t && t.getAttribute && t.getAttribute("data-close") === "1") closeModal();
+    });
+    window.addEventListener("keydown", (e) => {
+      if (e.key === "Escape" && modal.classList.contains("open")) closeModal();
+    });
+
+
+    // ---------- Modal de NOTAS (reemplaza prompt/confirm) ----------
+    const noteModal = document.getElementById("noteModal");
+    const noteClose = document.getElementById("noteModalClose");
+    const noteTitle = document.getElementById("noteTitle");
+    const noteText = document.getElementById("noteText");
+    const noteComp = document.getElementById("noteComp");
+    const noteCancel = document.getElementById("noteCancel");
+    const noteSave = document.getElementById("noteSave");
+
+    let __noteResolve = null;
+
+    function openNoteModal({ petName, notes, comp }){
+      // Devuelve una promesa: {notes, comp} o null si cancelan
+      noteTitle.textContent = `Notas del servicio · ${petName}`;
+      noteText.value = (notes || "");
+      noteComp.checked = !!comp;
+
+      noteModal.classList.add("open");
+      noteModal.setAttribute("aria-hidden", "false");
+
+      // Focus al textarea para escribir directo
+      setTimeout(() => noteText.focus(), 0);
+
+      return new Promise((resolve) => { __noteResolve = resolve; });
+    }
+
+    function closeNoteModal(value){
+      noteModal.classList.remove("open");
+      noteModal.setAttribute("aria-hidden", "true");
+      if (__noteResolve){
+        __noteResolve(value);
+        __noteResolve = null;
+      }
+    }
+
+    noteClose.addEventListener("click", () => closeNoteModal(null));
+    noteCancel.addEventListener("click", () => closeNoteModal(null));
+    noteSave.addEventListener("click", () => {
+      closeNoteModal({ notes: noteText.value.trim(), comp: noteComp.checked });
+    });
+
+    noteModal.addEventListener("click", (e) => {
+      const t = e.target;
+      if (t && t.getAttribute && t.getAttribute("data-close") === "1") closeNoteModal(null);
+    });
+
+    window.addEventListener("keydown", (e) => {
+      if (e.key === "Escape" && noteModal.classList.contains("open")) closeNoteModal(null);
+      // Ctrl+Enter / Cmd+Enter para guardar rápido
+      if ((e.ctrlKey || e.metaKey) && e.key === "Enter" && noteModal.classList.contains("open")) {
+        closeNoteModal({ notes: noteText.value.trim(), comp: noteComp.checked });
+      }
+    });
+
+    function bindRowEvents(){
+      document.querySelectorAll(".pet-row").forEach(tr => {
+        tr.addEventListener("click", () => {
+          const id = tr.getAttribute("data-id");
+          const pet = allPets.find(x => x._id === id);
+          if (pet) openModal(pet);
+        });
+      });
+
+      // Eliminar
+      document.querySelectorAll(".del").forEach(btn => {
+        btn.addEventListener("click", async (e) => {
+          e.stopPropagation();
+          const id = btn.getAttribute("data-id");
+          if (!confirm("¿Seguro que deseas eliminar esta mascota?")) return;
+
+          const token = getToken();
+          const r = await fetch(`/api/pets/${id}`, {
+            method: "DELETE",
+            headers: { Authorization: `Bearer ${token}` }
+          });
+
+          const d = await r.json().catch(() => ({}));
+          if (!r.ok) {
+            alert(d.message || "No se pudo eliminar");
+            return;
+          }
+          loadPets();
+        });
+      });
+
+      // Cambiar estado
+      document.querySelectorAll(".toggle").forEach(btn => {
+        btn.addEventListener("click", async (e) => {
+          e.stopPropagation();
+          const id = btn.getAttribute("data-id");
+          const pet = allPets.find(x => x._id === id);
+          if (!pet) return;
+
+          const newStatus = (pet.status === "completado") ? "pendiente" : "completado";
+
+          const token = getToken();
+          const r = await fetch(`/api/pets/${id}/admin-status`, {
+            method: "PATCH",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${token}`
+            },
+            body: JSON.stringify({ status: newStatus })
+          });
+
+          const d = await r.json().catch(() => ({}));
+          if (!r.ok) {
+            alert(d.message || "No se pudo actualizar el estado");
+            return;
+          }
+          loadPets();
+        });
+      });
+
+      // Notas + complicación
+      document.querySelectorAll(".note").forEach(btn => {
+        btn.addEventListener("click", async (e) => {
+          e.stopPropagation();
+          const id = btn.getAttribute("data-id");
+          const pet = allPets.find(x => x._id === id);
+          if (!pet) return;
+
+          const result = await openNoteModal({
+            petName: pet.name || "Mascota",
+            notes: pet.adminNotes || "",
+            comp: !!pet.adminComplication
+          });
+          if (!result) return;
+
+          const notes = result.notes;
+          const comp = result.comp;
+
+          const token = getToken();
+          const r = await fetch(`/api/pets/${id}/admin-status`, {
+            method: "PATCH",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${token}`
+            },
+            body: JSON.stringify({ adminNotes: notes, adminComplication: comp })
+          });
+
+          const d = await r.json().catch(() => ({}));
+          if (!r.ok) {
+            alert(d.message || "No se pudieron guardar las notas");
+            return;
+          }
+          loadPets();
+        });
+      });
+    }
+
+    async function loadPets() {
+      hideMsg();
+      rows.innerHTML = `
+        <tr>
+          <td colspan="6" class="patitas-admin-empty">Cargando…</td>
+        </tr>
+      `;
+
+      const token = getToken();
+      const res = await fetch("/api/pets", {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      const data = await res.json().catch(() => []);
+
+      allPets = Array.isArray(data) ? data : [];
+
+      if (!res.ok) {
+        showMsg(data.message || "No se pudieron cargar las mascotas.");
+        rows.innerHTML = "";
+        count.textContent = "—";
+        return;
+      }
+
+      const text = (q.value || "").toLowerCase().trim();
+      const filtered = allPets.filter(p =>
+        (p.name || "").toLowerCase().includes(text) ||
+        (p.ownerName || "").toLowerCase().includes(text)
+      );
+
+      count.textContent = `${filtered.length}`;
+
+      if (filtered.length === 0) {
+        rows.innerHTML = `
+          <tr>
+            <td colspan="6" class="patitas-admin-empty">No hay resultados para tu búsqueda.</td>
+          </tr>
+        `;
+        return;
+      }
+
+      rows.innerHTML = filtered.map(p => {
+        const sub = [p.breed, (p.age != null ? `${p.age} año(s)` : null)].filter(Boolean).join(" • ");
+        const status = (p.status || "pendiente");
+        return `
+          <tr class="patitas-admin-row pet-row" data-id="${p._id}" title="Haz clic para ver detalles">
+            <td data-label="Mascota">
+              <div class="patitas-admin-name">${p.name || "—"}</div>
+              ${sub ? `<div class="patitas-admin-sub">${sub}</div>` : ""}
+            </td>
+            <td data-label="Especie">${p.species || "—"}</td>
+            <td data-label="Propietario">${p.ownerName || "—"}</td>
+            <td data-label="Teléfono">${p.ownerPhone || "—"}</td>
+            <td data-label="Estado"><span class="patitas-admin-pill">${status}</span></td>
+            <td class="patitas-tx-right" data-label="Acciones">
+              <button data-id="${p._id}" class="patitas-admin-btn small toggle" type="button">
+                ${status === "completado" ? "Marcar pendiente" : "Marcar completado"}
+              </button>
+              <button data-id="${p._id}" class="patitas-admin-btn small note" type="button">Notas</button>
+              <button data-id="${p._id}" class="patitas-admin-danger del" type="button">Eliminar</button>
+            </td>
+          </tr>
+        `;
+      }).join("");
+
+      bindRowEvents();
+    }
+
+    document.getElementById("reload").onclick = loadPets;
+    q.addEventListener("input", () => {
+      clearTimeout(window.__patitasQ);
+      window.__patitasQ = setTimeout(loadPets, 150);
+    });
+
+    loadPets();
+  </script>
+
+  <!-- Modal de detalle de mascota -->
+  <div id="petModal" class="patitas-modal" aria-hidden="true">
+    <div class="patitas-modal-backdrop" data-close="1"></div>
+    <div class="patitas-modal-card" role="dialog" aria-modal="true" aria-labelledby="petModalTitle">
+      <button class="patitas-modal-close" type="button" id="petModalClose" aria-label="Cerrar">×</button>
+      <h3 id="petModalTitle" class="patitas-modal-title">Detalle de la mascota</h3>
+
+      <div class="patitas-modal-grid">
+        <div class="patitas-modal-section">
+          <div class="patitas-modal-k">Mascota</div>
+          <div class="patitas-modal-v" id="m_name">—</div>
+        </div>
+        <div class="patitas-modal-section">
+          <div class="patitas-modal-k">Especie</div>
+          <div class="patitas-modal-v" id="m_species">—</div>
+        </div>
+        <div class="patitas-modal-section">
+          <div class="patitas-modal-k">Raza</div>
+          <div class="patitas-modal-v" id="m_breed">—</div>
+        </div>
+        <div class="patitas-modal-section">
+          <div class="patitas-modal-k">Edad</div>
+          <div class="patitas-modal-v" id="m_age">—</div>
+        </div>
+
+        <div class="patitas-modal-section">
+          <div class="patitas-modal-k">Propietario</div>
+          <div class="patitas-modal-v" id="m_owner">—</div>
+        </div>
+        <div class="patitas-modal-section">
+          <div class="patitas-modal-k">Teléfono</div>
+          <div class="patitas-modal-v" id="m_phone">—</div>
+        </div>
+
+        <div class="patitas-modal-section">
+          <div class="patitas-modal-k">Servicio</div>
+          <div class="patitas-modal-v" id="m_service">—</div>
+        </div>
+        <div class="patitas-modal-section">
+          <div class="patitas-modal-k">Vacunas</div>
+          <div class="patitas-modal-v" id="m_vaccines">—</div>
+        </div>
+
+        <div class="patitas-modal-section">
+          <div class="patitas-modal-k">Estado</div>
+          <div class="patitas-modal-v" id="m_status">—</div>
+        </div>
+        <div class="patitas-modal-section">
+          <div class="patitas-modal-k">Complicación</div>
+          <div class="patitas-modal-v" id="m_complication">—</div>
+        </div>
+        <div class="patitas-modal-section">
+          <div class="patitas-modal-k">Completado</div>
+          <div class="patitas-modal-v" id="m_completedAt">—</div>
+        </div>
+
+        <div class="patitas-modal-section patitas-modal-span-2">
+          <div class="patitas-modal-k">Notas</div>
+          <div class="patitas-modal-v" id="m_notes">—</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal de notas (admin/vet) -->
+  <div id="noteModal" class="patitas-modal" aria-hidden="true">
+    <div class="patitas-modal-backdrop" data-close="1"></div>
+    <div class="patitas-modal-card" role="dialog" aria-modal="true" aria-labelledby="noteTitle">
+      <button class="patitas-modal-close" type="button" id="noteModalClose" aria-label="Cerrar">×</button>
+      <h3 id="noteTitle" class="patitas-modal-title">Notas del servicio</h3>
+
+      <div class="patitas-modal-form">
+        <div>
+          <div class="patitas-modal-label">Notas</div>
+          <textarea id="noteText" class="patitas-modal-textarea" placeholder="Escribe aquí las notas del servicio…"></textarea>
+        </div>
+
+        <div class="patitas-modal-row">
+          <label class="patitas-modal-check">
+            <input id="noteComp" type="checkbox" />
+            Hubo complicación
+          </label>
+
+          <div class="patitas-modal-actions">
+            <button id="noteCancel" class="patitas-btn-ghost" type="button">Cancelar</button>
+            <button id="noteSave" class="patitas-btn-primary" type="button">Guardar</button>
+          </div>
+        </div>
+
+        <p class="patitas-modal-p muted" style="margin:0;">
+          Tip: <b>Ctrl + Enter</b> (o <b>Cmd + Enter</b>) para guardar rápido.
+        </p>
+      </div>
+    </div>
+  </div>
+
+</body>
+</html>
