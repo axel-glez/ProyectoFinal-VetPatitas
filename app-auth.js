@@ -1,11 +1,7 @@
 // Helpers de auth (JWT) para el frontend
 // Importante: este archivo puede cargarse ANTES que assets/api.js.
-<<<<<<< HEAD
-// Por eso NO leemos window.API_URL una sola vez arriba; lo resolvemos dinámicamente.
-// Si window.API_URL no existe todavía, usamos el backend de Render como fallback.
-=======
 // Por eso resolvemos dinámicamente el API base.
->>>>>>> bdb76f2 (Fix API base for pets (Render) + avoid SRV/same-origin)
+// Si window.API_URL no existe todavía, usamos el backend de Render como fallback.
 function getApiBase() {
   if (typeof window !== "undefined" && window.API_URL) return window.API_URL;
   return "https://proyectofinal-vetbackend.onrender.com";
