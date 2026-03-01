@@ -1,6 +1,11 @@
 // auth.js (ES Module) — helpers para manejar sesión (JWT) en el frontend
 
-const API_BASE = ""; // same-origin (backend sirve el frontend)
+// En Vercel, el frontend vive en otro dominio.
+// Ojo: este archivo puede cargarse antes que ./api.js, así que resolvemos dinámicamente.
+function getApiBase() {
+  if (typeof window !== "undefined" && window.API_URL) return window.API_URL;
+  return "https://proyectofinal-vetbackend.onrender.com";
+}
 
 // -------- Storage helpers --------
 export function getToken() {
@@ -31,7 +36,7 @@ export async function apiFetch(path, options = {}) {
   );
   if (token) headers["Authorization"] = `Bearer ${token}`;
 
-  const res = await fetch(API_BASE + path, { ...options, headers });
+  const res = await fetch(getApiBase() + path, { ...options, headers });
 
   // intentamos leer json, pero sin romper si viene vacío
   let data = null;

@@ -109,8 +109,9 @@
     </div>
   </footer>
 
+  <script src="assets/api.js"></script>
   <script type="module">
-    import { setSession, me } from "./assets/auth.js";
+    import { setSession, me, apiFetch } from "./assets/auth.js";
 
     const u = await me();
     if (u) window.location.href = "index.html";
@@ -137,16 +138,14 @@
         return;
       }
 
-      const res = await fetch("/api/auth/login", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, password })
-      });
-
-      const data = await res.json().catch(() => ({}));
-
-      if (!res.ok) {
-        msg.textContent = data.message || "Error al iniciar sesión";
+      let data;
+      try {
+        data = await apiFetch("/api/auth/login", {
+          method: "POST",
+          body: JSON.stringify({ email, password })
+        });
+      } catch (err) {
+        msg.textContent = (err && err.message) ? err.message : "Error al iniciar sesión";
         msg.style.display = "block";
         return;
       }

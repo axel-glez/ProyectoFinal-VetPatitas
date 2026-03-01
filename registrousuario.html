@@ -131,7 +131,9 @@
     </div>
   </footer>
 
+  <script src="assets/api.js"></script>
   <script type="module">
+    const API_URL = window.API_URL || "";
     const form = document.getElementById("form");
     const msg = document.getElementById("msg");
     const ok = document.getElementById("ok");
@@ -170,7 +172,7 @@
         payload.adminCode = adminCode;
       }
 
-      const res = await fetch("/api/auth/register", {
+      const res = await fetch(`${API_URL}/api/auth/register`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload)

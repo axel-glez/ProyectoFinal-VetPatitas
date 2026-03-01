@@ -1,5 +1,11 @@
 // Helpers de auth (JWT) para el frontend
-const API_BASE = ""; // same-origin (porque el backend sirve el frontend)
+// Importante: este archivo puede cargarse ANTES que assets/api.js.
+// Por eso NO leemos window.API_URL una sola vez arriba; lo resolvemos dinámicamente.
+// Si window.API_URL no existe todavía, usamos el backend de Render como fallback.
+function getApiBase() {
+  if (typeof window !== "undefined" && window.API_URL) return window.API_URL;
+  return "https://proyectofinal-vetbackend.onrender.com";
+}
 
 function getToken() {
   return localStorage.getItem("token");
@@ -28,7 +34,7 @@ async function apiFetch(path, options = {}) {
   const headers = Object.assign({ "Content-Type": "application/json" }, options.headers || {});
   if (token) headers["Authorization"] = `Bearer ${token}`;
 
-  const res = await fetch(API_BASE + path, { ...options, headers });
+  const res = await fetch(getApiBase() + path, { ...options, headers });
 
   let data = null;
   const text = await res.text();
