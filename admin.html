@@ -237,18 +237,12 @@
           const id = btn.getAttribute("data-id");
           if (!confirm("¿Seguro que deseas eliminar esta mascota?")) return;
 
-          const token = getToken();
-          const r = await apiFetch(`/api/pets/${id}`, {
-            method: "DELETE",
-            headers: { Authorization: `Bearer ${token}` }
-          });
-
-          const d = await r.json().catch(() => ({}));
-          if (!r.ok) {
-            alert(d.message || "No se pudo eliminar");
-            return;
+          try {
+            await apiFetch(`/api/pets/${id}`, { method: "DELETE" });
+            loadPets();
+          } catch (err) {
+            alert((err && err.message) ? err.message : "No se pudo eliminar");
           }
-          loadPets();
         });
       });
 
@@ -262,22 +256,15 @@
 
           const newStatus = (pet.status === "completado") ? "pendiente" : "completado";
 
-          const token = getToken();
-          const r = await apiFetch(`/api/pets/${id}/admin-status`, {
-            method: "PATCH",
-            headers: {
-              "Content-Type": "application/json",
-              Authorization: `Bearer ${token}`
-            },
-            body: JSON.stringify({ status: newStatus })
-          });
-
-          const d = await r.json().catch(() => ({}));
-          if (!r.ok) {
-            alert(d.message || "No se pudo actualizar el estado");
-            return;
+          try {
+            await apiFetch(`/api/pets/${id}/admin-status`, {
+              method: "PATCH",
+              body: JSON.stringify({ status: newStatus })
+            });
+            loadPets();
+          } catch (err) {
+            alert((err && err.message) ? err.message : "No se pudo actualizar el estado");
           }
-          loadPets();
         });
       });
 
@@ -299,22 +286,15 @@
           const notes = result.notes;
           const comp = result.comp;
 
-          const token = getToken();
-          const r = await apiFetch(`/api/pets/${id}/admin-status`, {
-            method: "PATCH",
-            headers: {
-              "Content-Type": "application/json",
-              Authorization: `Bearer ${token}`
-            },
-            body: JSON.stringify({ adminNotes: notes, adminComplication: comp })
-          });
-
-          const d = await r.json().catch(() => ({}));
-          if (!r.ok) {
-            alert(d.message || "No se pudieron guardar las notas");
-            return;
+          try {
+            await apiFetch(`/api/pets/${id}/admin-status`, {
+              method: "PATCH",
+              body: JSON.stringify({ adminNotes: notes, adminComplication: comp })
+            });
+            loadPets();
+          } catch (err) {
+            alert((err && err.message) ? err.message : "No se pudieron guardar las notas");
           }
-          loadPets();
         });
       });
     }
@@ -327,20 +307,17 @@
         </tr>
       `;
 
-      const token = getToken();
-      const res = await apiFetch("/api/pets", {
-        headers: { Authorization: `Bearer ${token}` }
-      });
-      const data = await res.json().catch(() => []);
-
-      allPets = Array.isArray(data) ? data : [];
-
-      if (!res.ok) {
-        showMsg(data.message || "No se pudieron cargar las mascotas.");
+      let data = [];
+      try {
+        data = await apiFetch("/api/pets", { method: "GET" });
+      } catch (err) {
+        showMsg((err && err.message) ? err.message : "No se pudieron cargar las mascotas.");
         rows.innerHTML = "";
         count.textContent = "—";
         return;
       }
+
+      allPets = Array.isArray(data) ? data : [];
 
       const text = (q.value || "").toLowerCase().trim();
       const filtered = allPets.filter(p =>
